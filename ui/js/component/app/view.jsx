@@ -4,6 +4,7 @@ import Header from "component/header";
 import ModalError from "component/modalError";
 import ModalDownloading from "component/modalDownloading";
 import UpgradeModal from "component/modalUpgrade";
+import IncompatibleDaemonModal from "component/incompatibleDaemonModal";
 import WelcomeModal from "component/modalWelcome";
 import lbry from "lbry";
 import { Line } from "rc-progress";
@@ -17,6 +18,8 @@ class App extends React.PureComponent {
     if (!this.props.upgradeSkipped) {
       this.props.checkUpgradeAvailable();
     }
+
+    this.props.checkDaemonVersion();
 
     lbry.balanceSubscribe(balance => {
       this.props.updateBalance(balance);
@@ -32,6 +35,7 @@ class App extends React.PureComponent {
         <div id="main-content">
           <Router />
         </div>
+        {modal == "incompatibleDaemon" && <IncompatibleDaemonModal />}
         {modal == "upgrade" && <UpgradeModal />}
         {modal == "downloading" && <ModalDownloading />}
         {modal == "error" && <ModalError />}

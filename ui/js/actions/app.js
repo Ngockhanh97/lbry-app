@@ -1,6 +1,6 @@
 import * as types from "constants/action_types";
 import lbry from "lbry";
-import getIncludedDaemonVersionInfo from "utils";
+import { getIncludedDaemonVersionInfo } from "utils";
 import {
   selectUpdateUrl,
   selectUpgradeDownloadPath,
@@ -207,14 +207,8 @@ export function doCheckDaemonVersion() {
   console.log("made it into doCheckDaemonVersion");
   return function(dispatch, getState) {
     lbry.version().then(({ lbrynet_version }) => {
-      console.log("lbrynet version from lbry.version() call:", lbrynet_version);
-      console.log(
-        "lbrynet version from utils.getIncludedDaemonVersionInfo() call:",
-        utils.getIncludedDaemonVersionInfo()["lbrynet_version"]
-      );
       if (
-        utils.getIncludedDaemonVersionInfo()["lbrynet_version"] ==
-        lbrynet_version
+        getIncludedDaemonVersionInfo()["lbrynet_version"] == lbrynet_version
       ) {
         dispatch({
           type: types.OPEN_MODAL,
