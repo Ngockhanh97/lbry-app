@@ -1,5 +1,6 @@
 import * as types from "constants/action_types";
 import lbry from "lbry";
+import getIncludedDaemonVersionInfo from "utils";
 import {
   selectUpdateUrl,
   selectUpgradeDownloadPath,
@@ -184,7 +185,7 @@ export function doCheckUpgradeAvailable() {
     const state = getState();
 
     lbry.getAppVersionInfo().then(({ remoteVersion, upgradeAvailable }) => {
-      if (upgradeAvailable) {
+      if (false && upgradeAvailable) {
         dispatch({
           type: types.UPDATE_VERSION,
           data: {
@@ -199,6 +200,36 @@ export function doCheckUpgradeAvailable() {
         });
       }
     });
+  };
+}
+
+export function doCheckDaemonVersion() {
+  console.log("made it into doCheckDaemonVersion");
+  return function(dispatch, getState) {
+    lbry.version().then(({ lbrynet_version }) => {
+      console.log("lbrynet version from lbry.version() call:", lbrynet_version);
+      console.log(
+        "lbrynet version from utils.getIncludedDaemonVersionInfo() call:",
+        utils.getIncludedDaemonVersionInfo()["lbrynet_version"]
+      );
+      if (
+        utils.getIncludedDaemonVersionInfo()["lbrynet_version"] ==
+        lbrynet_version
+      ) {
+        dispatch({
+          type: types.OPEN_MODAL,
+          data: {
+            modal: "incompatibleDaemon",
+          },
+        });
+      }
+    });
+  };
+}
+
+export function doSkipWrongDaemonNotice() {
+  return {
+    type: types.SKIP_WRONG_DAEMON_NOTICE,
   };
 }
 
@@ -246,5 +277,11 @@ export function doClearCache() {
     window.cacheStore.purge();
 
     return Promise.resolve();
+  };
+}
+
+export function doQuit() {
+  return function(dispatch, getState) {
+    app.quit();
   };
 }
